@@ -1,0 +1,9 @@
+install.packages("RJSONIO")
+#macOS
+#install.packages("/Users/martinafantozzi/Applications//MonolixSuite2021R1.app/Contents/Resources/monolixSuite/connectors/lixoftConnectors.tar.gz", 
+repos = NULL, type="source", INSTALL_opts ="--no-multiarch")
+#Windows
+install.packages("C:/ProgramData/Lixoft/MonolixSuite2021R1/connectors/lixoftConnectors.tar.gz",repos = NULL, type="source",INSTALL_opts ="--no-multiarch") 
+install.packages("~/Downloads/RsSimulx_2.0.0.tar.gz", repo = NULL) #o direttamente dalla console di R come file locale
+
+

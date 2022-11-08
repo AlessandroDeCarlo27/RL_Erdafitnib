@@ -1,14 +1,14 @@
 08/11/2022 
-21:17
+21:18
 $PROBLEM    ERDAFITINIB PKPD - initial SIMULATION
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-$INPUT      C ID TIME DAY II ADDL AMT EVID MDV CMT DV SEX IMPREN2 IMPREN3 WT1 WT2 AGP
-            CL V2 V3 Q3 V4 Q4 KA ALAG KD BSEXCL BIMPREN2CL BIMPREN3CL BWT1V2 BWT2V2 BSEXV2 POWERAGP
-            PO40 PO4P SLOPEm GAMMA parKE0 parKIN parKBASE TLAG TSLD THETASEX
+$INPUT      C ID TIME DAY II ADDL AMT EVID MDV CMT DV SEX IMPREN2 IMPREN3 WT1 WT2
+            CL V2 V3 Q3 V4 Q4 KA ALAG fu
+            PO40 PO4P SLOPEm GAMMA parKE0 parKIN parKBASE TLAG TSLD
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-$DATA       DATASET2.csv IGNORE=C
+$DATA       DATASET_50sog.csv IGNORE=C
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 $SUBROUTINE ADVAN6 TOL=6
@@ -30,11 +30,9 @@ $PK
 test = THETA(1)*ETA(1)
 
 ;PK PARAMETERS-----------------------------------------------------------------------------------
-fu=KD/(KD+(AGP*10632))
-;fu=0.00356
-V2tot=V2*((AGP/1.24)**POWERAGP)*EXP(BWT1V2*WT1+BWT2V2*WT2)  
+V2tot=V2  
 V2free=V2tot/fu
-CLfree=CL*EXP(BSEXCL*SEX+BIMPREN2CL*IMPREN2+BIMPREN3CL*IMPREN3)
+CLfree=CL
 k32=Q3/V2free    	;inter-compartment clearance
 k23=Q3/V3		;inter-compartment clearance
 k42=Q4/V2free		;inter-compartment clearance
@@ -50,7 +48,6 @@ ALAG1=ALAG  		;lag time
 ke0=parKE0
 kin=parKIN
 kbase=parKBASE
-PO40fin=PO40*EXP(THETASEX*SEX)
 
 ;Initial conditions
 ;pk
@@ -72,6 +69,8 @@ DADT(2)=Kabs*A(1)-k02*fu*A(2)-k32*fu*A(2)+k23*A(3)-k42*fu*A(2)+k24*A(4)	;central
 DADT(3)=k32*fu*A(2)-k23*A(3)						;peripheral compartment 1 
 DADT(4)=k42*fu*A(2)-k24*A(4)						;peripheral compartment 2
 
+;Ctot=A(2)/V2tot ;drug plasmatic concentration
+;Cfree=fu*Ctot
 
 ;pd ODEs
 DADT(5)=ke0*((A(2)/V2tot)*fu-A(5))
@@ -99,12 +98,10 @@ EPS1=EPS(1)
 
 Y = EPS1
 
-
-
 IF(TSLD.GT.TLAG) THEN
-EBSL=PO4P-(PO4P-PO40fin)*EXP(-kbase*(TSLD-TLAG))
+EBSL=PO4P-(PO4P-PO40)*EXP(-kbase*(TSLD-TLAG))
 ELSE
-EBSL=PO40fin
+EBSL=PO40
 ENDIF
 EBSLfin=EBSL
 M=SLOPEm*(1-A(6))
@@ -134,7 +131,7 @@ $SIMULATION (20902,NEW) NSUB=1 ONLYSIMULATION;
 ;simend
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-$TABLE      ID TIME DAY MDV CMT admPK centPK peri1PK peri2PK compeffPD attPD E Cfree Ctot NOAPPEND NOPRINT ONEHEADER FILE=sdtab1 ;simulazioni
+$TABLE      ID TIME DAY MDV CMT admPK centPK peri1PK peri2PK compeffPD attPD E Cfree Ctot NOAPPEND NOPRINT ONEHEADER FILE=sdtab2 ;simulazioni
 
   
 NM-TRAN MESSAGES 
@@ -164,23 +161,23 @@ Current Date:        8 NOV 2022
 0DATA CHECKOUT RUN:              NO
  DATA SET LOCATED ON UNIT NO.:    2
  THIS UNIT TO BE REWOUND:        NO
- NO. OF DATA RECS IN DATA SET:      122
- NO. OF DATA ITEMS IN DATA SET:  43
+ NO. OF DATA RECS IN DATA SET:     1600
+ NO. OF DATA ITEMS IN DATA SET:  34
  ID DATA ITEM IS DATA ITEM NO.:   2
  DEP VARIABLE IS DATA ITEM NO.:  11
  MDV DATA ITEM IS DATA ITEM NO.:  9
 0INDICES PASSED TO SUBROUTINE PRED:
    8   3   7   0   0   5  10   0   0   0   6
 0LABELS FOR DATA ITEMS:
- C ID TIME DAY II ADDL AMT EVID MDV CMT DV SEX IMPREN2 IMPREN3 WT1 WT2 AGP CL V2 V3 Q3 V4 Q4 KA ALAG KD BSEXCL BIMPREN2CL
- BIMPREN3CL BWT1V2 BWT2V2 BSEXV2 POWERAGP PO40 PO4P SLOPEm GAMMA parKE0 parKIN parKBASE TLAG TSLD THETASEX
+ C ID TIME DAY II ADDL AMT EVID MDV CMT DV SEX IMPREN2 IMPREN3 WT1 WT2 CL V2 V3 Q3 V4 Q4 KA ALAG fu PO40 PO4P SLOPEm GAMMA
+ parKE0 parKIN parKBASE TLAG TSLD
 0(NONBLANK) LABELS FOR PRED-DEFINED ITEMS:
  admPK centPK peri1PK peri2PK compeffPD attPD Ctot Cfree E
 0FORMAT FOR DATA:
- (5(8E9.0/),3E9.0)
+ (5(6E11.0/),4E11.0)
 
- TOT. NO. OF OBS RECS:      121
- TOT. NO. OF INDIVIDUALS:        1
+ TOT. NO. OF OBS RECS:     1550
+ TOT. NO. OF INDIVIDUALS:       50
 0LENGTH OF THETA:   1
 0DEFAULT THETA BOUNDARY TEST OMITTED:    NO
 0OMEGA HAS SIMPLE DIAGONAL FORM WITH DIMENSION:   1
@@ -213,7 +210,7 @@ SEED   1 RESET TO INITIAL: YES
 0RECORDS ONLY:    ALL
 04 COLUMNS APPENDED:    NO
  PRINTED:                NO
- HEADER:                YES
+ HEADERS:               ONE
  FILE TO BE FORWARDED:   NO
  FORMAT:                S1PE11.4
  LFORMAT:
@@ -225,7 +222,7 @@ SEED   1 RESET TO INITIAL: YES
 
  GENERAL NONLINEAR KINETICS MODEL (DVERK1, ADVAN6)
 0MODEL SUBROUTINE USER-SUPPLIED - ID NO. 9999
-0MAXIMUM NO. OF BASIC PK PARAMETERS:  10
+0MAXIMUM NO. OF BASIC PK PARAMETERS:   9
 0COMPARTMENT ATTRIBUTES
  COMPT. NO.   FUNCTION   INITIAL    ON/OFF      DOSE      DEFAULT    DEFAULT
                          STATUS     ALLOWED    ALLOWED    FOR DOSE   FOR OBS.
@@ -244,7 +241,7 @@ SEED   1 RESET TO INITIAL: YES
  COMPT. NO.                             INDICES
               SCALE      BIOAVAIL.   ZERO-ORDER  ZERO-ORDER  ABSORB
                          FRACTION    RATE        DURATION    LAG
-    1            *           *           *           *          11
+    1            *           *           *           *          10
     2            *           *           *           *           *
     3            *           *           *           *           *
     4            *           *           *           *           *
@@ -279,11 +276,11 @@ SEED   1 RESET TO INITIAL: YES
 
  SIMULATION STEP PERFORMED
  SOURCE  1:
-    SEED1:    1197843843   SEED2:   -1085599444
- Elapsed simulation  time in seconds:     0.01
+    SEED1:    1495829103   SEED2:             0
+ Elapsed simulation  time in seconds:     0.12
  ESTIMATION STEP OMITTED:                 YES
- Elapsed finaloutput time in seconds:     0.04
- #CPUT: Total CPU Time in Seconds,        0.141
+ Elapsed finaloutput time in seconds:     0.39
+ #CPUT: Total CPU Time in Seconds,        0.594
 Stop Time: 
 08/11/2022 
-21:18
+21:19

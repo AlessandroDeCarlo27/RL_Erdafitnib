@@ -1,0 +1,85 @@
+DESCRIPTION:
+
+[LONGITUDINAL]
+input = {tlag, ka, Cl, V2, Q3, V3, Q4, V4, fu, ke0, gamma, m, kin, PO40, PO4P, kbase, TSLD, tlag_att}
+
+PK:
+
+V2tot=V2
+V2free=V2tot/fu
+k02 =Cl/V2tot
+k32= Q3/V2free    				;inter-compartment clearance
+k23=Q3/V3					;inter-compartment clearance
+k42=Q4/V2free					;inter-compartment clearance
+k24=Q4/V4 					;inter-compartment clearance
+k02=Cl/V2tot					;elimination clearance
+
+depot(type=1, target=q1, Tlag=tlag)
+
+EQUATION:
+; PK model definition
+t0=0
+q1_0=0
+q2_0=0
+q3_0=0
+q4_0=0
+
+ddt_q1=-ka*q1							;administration compartment
+ddt_q2=ka*q1-k02*fu*q2-k32*fu*q2+k23*q3-k42*fu*q2+k24*q4	;central compartment 
+ddt_q3=k32*fu*q2-k23*q3						;peripheral compartment 1 
+ddt_q4=k42*fu*q2-k24*q4						;peripheral compartment 2
+
+Ctot=q2/V2tot
+Cfree=fu*Ctot
+
+;PD model definition
+Ce_0=0
+T_0=0
+
+ddt_Ce=ke0*Cfree-ke0*Ce
+ddt_T=kin*(1-T)
+M=m*(1-T)
+
+if TSLD>tlag_att
+	PO4_BSL=PO4P-(PO4P-PO40)*exp(-kbase*(TSLD-tlag_att))
+else
+	PO4_BSL=PO40
+end
+
+PO4_BSLfin=PO4_BSL
+
+PO4=PO4_BSLfin+M*(Ce^gamma)
+
+
+OUTPUT:
+output={Ctot, Cfree, PO4, Ce}
+
+[INDIVIDUAL]
+input = {V2_pop, CL_pop, power_AGP_pop, AGP, bV2WT1_pop, WT1, bV2WT2_pop, WT2, bSEXV2_pop, SEX, bSEXCL_pop, bIMPREN2_pop,IMPREN2, bIMPREN3_pop, IMPREN3,tlag_pop, ka_pop, Q3_pop, V3_pop, Q4_pop, V4_pop, fu_pop, ke0_pop, gamma_pop, m_pop, kin_pop, PO40_pop, PO4P_pop, kbase_pop, TSLD_pop, tlag_att_pop,bSEXBSL_pop}
+EQUATION:
+V2_pred=V2_pop*((AGP/1.24)^power_AGP_pop)*exp(bV2WT1_pop*WT1+bV2WT2_pop*WT2+bSEXV2_pop*SEX)
+Cl_pred=CL_pop*exp(bSEXCL_pop*SEX+bIMPREN2_pop*IMPREN2+bIMPREN3_pop*IMPREN3)
+PO40_pred=PO40_pop*exp(bSEXBSL_pop*SEX)
+
+DEFINITION:
+V2={distribution=lognormal, typical=V2_pred, no-variability}
+Cl={distribution=lognormal, typical=Cl_pred, no-variability}
+tlag={distribution=lognormal, typical=tlag_pop, no-variability}
+ka={distribution=lognormal, typical=ka_pop, no-variability}
+Q3={distribution=lognormal, typical=Q3_pop, no-variability}
+V3={distribution=lognormal, typical=V3_pop, no-variability}
+Q4={distribution=lognormal, typical=Q4_pop, no-variability}
+V4={distribution=lognormal, typical=V4_pop, no-variability}
+fu={distribution=lognormal, typical=fu_pop, no-variability}
+ke0={distribution=lognormal, typical=ke0_pop, no-variability}
+gamma={distribution=lognormal, typical=gamma_pop, no-variability}
+m={distribution=lognormal, typical=m_pop, no-variability}
+kin={distribution=lognormal, typical=kin_pop, no-variability}
+PO40={distribution=lognormal, typical=PO40_pred, no-variability}
+PO4P={distribution=lognormal, typical=PO4P_pop, no-variability}
+kbase={distribution=lognormal, typical=kbase_pop, no-variability}
+TSLD={distribution=lognormal, typical=TSLD_pop, no-variability}
+tlag_att={distribution=lognormal, typical=tlag_att_pop, no-variability}
+
+[COVARIATE]
+input={AGP, WT1, WT2, SEX, IMPREN2, IMPREN3}

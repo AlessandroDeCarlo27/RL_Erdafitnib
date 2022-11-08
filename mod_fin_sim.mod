@@ -1,12 +1,12 @@
 $PROBLEM    ERDAFITINIB PKPD - initial SIMULATION
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-$INPUT      C ID TIME DAY II ADDL AMT EVID MDV CMT DV SEX IMPREN2 IMPREN3 WT1 WT2 AGP
-            CL V2 V3 Q3 V4 Q4 KA ALAG KD BSEXCL BIMPREN2CL BIMPREN3CL BWT1V2 BWT2V2 BSEXV2 POWERAGP
-            PO40 PO4P SLOPEm GAMMA parKE0 parKIN parKBASE TLAG TSLD THETASEX
+$INPUT      C ID TIME DAY II ADDL AMT EVID MDV CMT DV SEX IMPREN2 IMPREN3 WT1 WT2
+            CL V2 V3 Q3 V4 Q4 KA ALAG fu
+            PO40 PO4P SLOPEm GAMMA parKE0 parKIN parKBASE TLAG TSLD
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-$DATA       DATASET2.csv IGNORE=C
+$DATA       DATASET_50sog.csv IGNORE=C
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 $SUBROUTINE ADVAN6 TOL=6
@@ -28,11 +28,9 @@ $PK
 test = THETA(1)*ETA(1)
 
 ;PK PARAMETERS-----------------------------------------------------------------------------------
-fu=KD/(KD+(AGP*10632))
-;fu=0.00356
-V2tot=V2*((AGP/1.24)**POWERAGP)*EXP(BWT1V2*WT1+BWT2V2*WT2)  
+V2tot=V2  
 V2free=V2tot/fu
-CLfree=CL*EXP(BSEXCL*SEX+BIMPREN2CL*IMPREN2+BIMPREN3CL*IMPREN3)
+CLfree=CL
 k32=Q3/V2free    	;inter-compartment clearance
 k23=Q3/V3		;inter-compartment clearance
 k42=Q4/V2free		;inter-compartment clearance
@@ -48,7 +46,6 @@ ALAG1=ALAG  		;lag time
 ke0=parKE0
 kin=parKIN
 kbase=parKBASE
-PO40fin=PO40*EXP(THETASEX*SEX)
 
 ;Initial conditions
 ;pk
@@ -70,6 +67,8 @@ DADT(2)=Kabs*A(1)-k02*fu*A(2)-k32*fu*A(2)+k23*A(3)-k42*fu*A(2)+k24*A(4)	;central
 DADT(3)=k32*fu*A(2)-k23*A(3)						;peripheral compartment 1 
 DADT(4)=k42*fu*A(2)-k24*A(4)						;peripheral compartment 2
 
+;Ctot=A(2)/V2tot ;drug plasmatic concentration
+;Cfree=fu*Ctot
 
 ;pd ODEs
 DADT(5)=ke0*((A(2)/V2tot)*fu-A(5))
@@ -97,12 +96,10 @@ EPS1=EPS(1)
 
 Y = EPS1
 
-
-
 IF(TSLD.GT.TLAG) THEN
-EBSL=PO4P-(PO4P-PO40fin)*EXP(-kbase*(TSLD-TLAG))
+EBSL=PO4P-(PO4P-PO40)*EXP(-kbase*(TSLD-TLAG))
 ELSE
-EBSL=PO40fin
+EBSL=PO40
 ENDIF
 EBSLfin=EBSL
 M=SLOPEm*(1-A(6))
@@ -132,5 +129,5 @@ $SIMULATION (20902,NEW) NSUB=1 ONLYSIMULATION;
 ;simend
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-$TABLE      ID TIME DAY MDV CMT admPK centPK peri1PK peri2PK compeffPD attPD E Cfree Ctot NOAPPEND NOPRINT ONEHEADER FILE=sdtab1 ;simulazioni
+$TABLE      ID TIME DAY MDV CMT admPK centPK peri1PK peri2PK compeffPD attPD E Cfree Ctot NOAPPEND NOPRINT ONEHEADER FILE=sdtab2 ;simulazioni
 
