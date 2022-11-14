@@ -1,7 +1,7 @@
 library(RsSimulx)
 library(ggplot2)
 
-setwd("C:/Users/Win/Desktop/TESI MAGLISTRALE/RL_Erdafitnib")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 nsog=50
 sim_day<-30

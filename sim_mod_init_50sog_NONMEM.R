@@ -1,5 +1,5 @@
 #####################preparazione dataset (50 soggetti)##########################
-setwd("C:/Users/Win/Desktop/TESI MAGLISTRALE/RL_Erdafitnib")
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 #somministrazione: 8 mg/gg per 30 gg (II=24)
 TIME<-0.0001
 II<-c(24)
@@ -70,13 +70,16 @@ for(i in 1:ncomp){
 
 #costruzione dataset
 obs_adm<-rbind(adm,obs)
+obs_adm<-obs_adm[order(obs_adm$ID,obs_adm$TIME),]
 data<-merge(obs_adm,demo, by.x="ID", by.y="ID")
 dataset<-merge(data,parameters,by.x="ID", by.y="ID")
 C<-seq(1,length(dataset$ID),1)
 dataset<-cbind(C,dataset)
 dataset$C<-"."
 dataset$C[which(dataset$AMT==0)]<-"C"
-dataset<-dataset[order(dataset$ID,dataset$TIME),]
+#dataset<-dataset[order(dataset$ID,dataset$TIME),]
+# dataset<-dataset[order(dataset$ID,dataset$CMT),]
+# dataset<-dataset[order(dataset$ID,dataset$C,decreasing = TRUE),]
 dataset$TIME[which(dataset$TIME==1e-04)]<-"0.0001"
 dataset$TIME<-as.character(dataset$TIME)
 dataset$AMT[which(dataset$AMT==8*(10^3))]<-"8000"
