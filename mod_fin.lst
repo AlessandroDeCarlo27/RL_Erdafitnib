@@ -1,5 +1,5 @@
-14/11/2022 
-12:36
+15/11/2022 
+12:41
 $PROBLEM    ERDAFITINIB PKPD - initial SIMULATION
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -146,10 +146,9 @@ NM-TRAN MESSAGES
  IS < 1.
   
 License Registered to: Universita Degli Studi Di Pavia
-Expiration Date:    14 NOV 2022
-Current Date:       14 NOV 2022
-  **** WARNING!!! Days until program expires :   0 ****
-  **** CONTACT idssoftware@iconplc.com FOR RENEWAL ****
+Expiration Date:    14 OCT 2023
+Current Date:       15 NOV 2022
+Days until program expires : 334
 1NONLINEAR MIXED EFFECTS MODEL PROGRAM (NONMEM) VERSION 7.4.4
  ORIGINALLY DEVELOPED BY STUART BEAL, LEWIS SHEINER, AND ALISON BOECKMANN
  CURRENT DEVELOPERS ARE ROBERT BAUER, ICON DEVELOPMENT SOLUTIONS,
@@ -277,10 +276,10 @@ SEED   1 RESET TO INITIAL: YES
  SIMULATION STEP PERFORMED
  SOURCE  1:
     SEED1:    1170512435   SEED2:             0
- Elapsed simulation  time in seconds:     0.11
+ Elapsed simulation  time in seconds:     0.09
  ESTIMATION STEP OMITTED:                 YES
- Elapsed finaloutput time in seconds:     0.62
- #CPUT: Total CPU Time in Seconds,        0.656
+ Elapsed finaloutput time in seconds:     0.46
+ #CPUT: Total CPU Time in Seconds,        0.578
 Stop Time: 
-14/11/2022 
-12:36
+15/11/2022 
+12:41

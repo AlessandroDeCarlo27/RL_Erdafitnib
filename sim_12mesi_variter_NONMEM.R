@@ -62,6 +62,8 @@ for(j in 1:length(vett_niter)){
   temp[j]<-difftime(outTime,inTime,units="secs")
 }
 
-plot(vett_niter,temp,xlab="numero iterazioni",ylab="tempo [secs]")
+png("timesplot.png",width = 800, height = 500,units = 'px')
+plot(vett_niter,temp,xlab="numero iterazioni",ylab="tempo [secs]",cex=2)
+dev.off()
 #ggplot()+geom_line(data=res,aes(x=TIME/24,y=PO4,group=ID,color=as.factor(ID)))
 
