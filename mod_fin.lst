@@ -1,5 +1,5 @@
 15/11/2022 
-12:41
+16:20
 $PROBLEM    ERDAFITINIB PKPD - initial SIMULATION
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -160,7 +160,7 @@ Days until program expires : 334
 0DATA CHECKOUT RUN:              NO
  DATA SET LOCATED ON UNIT NO.:    2
  THIS UNIT TO BE REWOUND:        NO
- NO. OF DATA RECS IN DATA SET:     1850
+ NO. OF DATA RECS IN DATA SET:     1600
  NO. OF DATA ITEMS IN DATA SET:  34
  ID DATA ITEM IS DATA ITEM NO.:   2
  DEP VARIABLE IS DATA ITEM NO.:  11
@@ -275,11 +275,11 @@ SEED   1 RESET TO INITIAL: YES
 
  SIMULATION STEP PERFORMED
  SOURCE  1:
-    SEED1:    1170512435   SEED2:             0
- Elapsed simulation  time in seconds:     0.09
+    SEED1:    1495829103   SEED2:             0
+ Elapsed simulation  time in seconds:     0.26
  ESTIMATION STEP OMITTED:                 YES
- Elapsed finaloutput time in seconds:     0.46
- #CPUT: Total CPU Time in Seconds,        0.578
+ Elapsed finaloutput time in seconds:     1.87
+ #CPUT: Total CPU Time in Seconds,        1.313
 Stop Time: 
 15/11/2022 
-12:41
+16:21
